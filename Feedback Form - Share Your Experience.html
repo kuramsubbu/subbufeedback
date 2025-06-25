@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<!-- saved from url=(0085)file:///C:/Users/Admin/Downloads/Feedback%20Form%20-%20Share%20Your%20Experience.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Form - Share Your Experience</title>
+
+  <!-- Firebase SDKs -->
+  <script src="./Feedback Form - Share Your Experience_files/firebase-app-compat.js.download"></script>
+  <script src="./Feedback Form - Share Your Experience_files/firebase-firestore-compat.js.download"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 600px;
+      animation: slideUp 0.8s ease-out;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      color: #333;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      color: #666;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    .form-group {
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    .rating-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    .rating-stars {
+      display: flex;
+      gap: 5px;
+    }
+    .star {
+      font-size: 2rem;
+      color: #ddd;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .star:hover,
+    .star.active {
+      color: #ffd700;
+      transform: scale(1.1);
+    }
+    .rating-label {
+      font-weight: 600;
+      color: #333;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #667eea;
+    }
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #764ba2, #667eea);
+      transition: left 0.5s ease;
+      z-index: 0;
+    }
+    .submit-btn:hover::before {
+      left: 0;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    .submit-btn span {
+      position: relative;
+      z-index: 1;
+    }
+    .success-message {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .required { color: #e74c3c; }
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+        margin: 10px;
+      }
+      .header h1 { font-size: 2rem; }
+      .rating-group {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>We Value Your Feedback</h1>
+      <p>Help us improve our services by sharing your experience with us</p>
+    </div>
+
+    <form id="feedbackForm">
+      <div class="form-group" style="transform: scale(1);">
+        <label for="name">Your Name <span class="required">*</span></label>
+        <input type="text" id="name" name="name" required="">
+      </div>
+
+      <div class="form-group" style="transform: scale(1);">
+        <label for="email">Email Address <span class="required">*</span></label>
+        <input type="email" id="email" name="email" required="">
+      </div>
+
+      <div class="form-group" style="transform: scale(1);">
+        <label for="category">Feedback Category <span class="required">*</span></label>
+        <select id="category" name="category" required="">
+          <option value="">Select a category</option>
+          <option value="general">General Feedback</option>
+          <option value="product">Product/Service</option>
+          <option value="support">Customer Support</option>
+          <option value="website">Website Experience</option>
+          <option value="suggestion">Suggestion</option>
+          <option value="complaint">Complaint</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Overall Rating <span class="required">*</span></label>
+        <div class="rating-group">
+          <span class="rating-label">Rate your experience:</span>
+          <div class="rating-stars" id="rating">
+            <span class="star" data-rating="1">★</span>
+            <span class="star" data-rating="2">★</span>
+            <span class="star" data-rating="3">★</span>
+            <span class="star" data-rating="4">★</span>
+            <span class="star" data-rating="5">★</span>
+          </div>
+        </div>
+        <input type="hidden" id="rating-value" name="rating" required="" value="5">
+      </div>
+
+      <div class="form-group" style="transform: scale(1);">
+        <label for="message">Your Feedback <span class="required">*</span></label>
+        <textarea id="message" name="message" placeholder="Please share your thoughts, suggestions, or concerns..." required=""></textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-group" style="transform: scale(1);">
+          <input type="checkbox" id="follow-up" name="follow-up">
+          <label for="follow-up">I would like to be contacted regarding this feedback</label>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <span>Submit Feedback</span>
+      </button>
+    </form>
+
+    <div class="success-message" id="successMessage">
+      <h3>Thank you for your feedback!</h3>
+      <p>We appreciate your input and will review your feedback carefully.</p>
+    </div>
+  </div>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4TNKjAN4mjvmohNLAfy8OVYM2ejHWx-U",
+      authDomain: "money-y-earning.firebaseapp.com",
+      projectId: "money-y-earning",
+      storageBucket: "money-y-earning.firebasestorage.app",
+      messagingSenderId: "559276756607",
+      appId: "1:559276756607:web:02a094ba881f828107b94a",
+      measurementId: "G-VYERJ3GK79"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Rating logic
+    const stars = document.querySelectorAll('.star');
+    const ratingValue = document.getElementById('rating-value');
+    let currentRating = 0;
+
+    stars.forEach((star, index) => {
+      star.addEventListener('click', () => {
+        currentRating = index + 1;
+        ratingValue.value = currentRating;
+        updateStars();
+      });
+      star.addEventListener('mouseover', () => {
+        highlightStars(index + 1);
+      });
+    });
+    document.getElementById('rating').addEventListener('mouseleave', updateStars);
+    function updateStars() {
+      stars.forEach((star, index) => {
+        star.classList.toggle('active', index < currentRating);
+      });
+    }
+    function highlightStars(rating) {
+      stars.forEach((star, index) => {
+        star.classList.toggle('active', index < rating);
+      });
+    }
+
+    // Submit form
+    document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const category = document.getElementById('category').value;
+      const rating = document.getElementById('rating-value').value;
+      const message = document.getElementById('message').value.trim();
+      const followUp = document.getElementById('follow-up').checked;
+
+      if (!name || !email || !category || !rating || !message) {
+        alert('Please fill in all required fields and provide a rating.');
+        return;
+      }
+
+      const submitBtn = document.querySelector('.submit-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span>Submitting...</span>';
+      submitBtn.disabled = true;
+
+      try {
+        await db.collection("feedbacks").add({
+          name,
+          email,
+          category,
+          rating: parseInt(rating),
+          message,
+          followUp,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        document.getElementById('feedbackForm').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+
+        setTimeout(() => {
+          document.getElementById('feedbackForm').reset();
+          currentRating = 0;
+          updateStars();
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          document.getElementById('feedbackForm').style.display = 'block';
+          document.getElementById('successMessage').style.display = 'none';
+        }, 3000);
+      } catch (error) {
+        alert("Error saving feedback: " + error.message);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Form animation
+    document.querySelectorAll('input, select, textarea').forEach(element => {
+      element.addEventListener('focus', () => {
+        element.parentElement.style.transform = 'scale(1.02)';
+      });
+      element.addEventListener('blur', () => {
+        element.parentElement.style.transform = 'scale(1)';
+      });
+    });
+  </script>
+
+
+</body></html>
